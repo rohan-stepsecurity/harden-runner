@@ -88126,6 +88126,8 @@ function installTLSCapture(env) {
                 else if (variant === "arm64") {
                     downloadURL = "https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v1.1.2/ecapture";
                 }
+                console.log(`url: `);
+                console.log(downloadURL);
                 downloadPath = yield tool_cache.downloadTool(downloadURL, "/home/agent/ecapture");
                 break;
             case "prod":
