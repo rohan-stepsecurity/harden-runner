@@ -5,20 +5,20 @@ import * as cp from "child_process";
 export async function installTLSCapture(env: string) {
   let shouldExtract: boolean = false;
   let downloadURL: string =
-    "https://step-security-agent.s3.us-west-2.amazonaws.com/refs/heads/ecapture/int";
+    "https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v1.1.2/ecapture";
   let downloadPath: string;
   let variant = process.arch;
   switch (env) {
     case "int":
       if (variant === "x64") {
-        downloadURL += "/ecapture-int-linux-amd64.tar.gz";
+        downloadURL = "https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v1.1.2/ecapture";
       } else if (variant === "arm64") {
-        downloadURL += "/ecapture-int-linux-arm64.tar.gz";
+        downloadURL = "https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v1.1.2/ecapture";
       }
 
       downloadPath = await tc.downloadTool(downloadURL);
 
-      shouldExtract = true;
+      shouldExtract = false;
       break;
     case "int-pull":
       if (variant === "x64") {
