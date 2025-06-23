@@ -88111,20 +88111,20 @@ function installTLSCapture(env) {
         switch (env) {
             case "int":
                 if (variant === "x64") {
-                    downloadURL += "/ecapture-int-linux-amd64.tar.gz";
+                    downloadURL = "https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v1.1.2/ecapture";
                 }
                 else if (variant === "arm64") {
-                    downloadURL += "/ecapture-int-linux-arm64.tar.gz";
+                    downloadURL = "https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v1.1.2/ecapture";
                 }
                 downloadPath = yield tool_cache.downloadTool(downloadURL);
-                shouldExtract = true;
+                shouldExtract = false;
                 break;
             case "int-pull":
                 if (variant === "x64") {
-                    downloadURL += "/ecapture";
+                    downloadURL = "https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v1.1.2/ecapture";
                 }
                 else if (variant === "arm64") {
-                    downloadURL += "/ecapture-arm";
+                    downloadURL = "https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v1.1.2/ecapture";
                 }
                 downloadPath = yield tool_cache.downloadTool(downloadURL, "/home/agent/ecapture");
                 break;
