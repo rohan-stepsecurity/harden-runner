@@ -88041,6 +88041,10 @@ function installAgent(env, agentTLS, configStr) {
                     downloadPath = yield tool_cache.downloadTool(`https://step-security-agent.s3.us-west-2.amazonaws.com/refs/heads/self-hosted/int/agent_linux_${variant}.tar.gz`);
                     shouldExtract = true;
                     break;
+                case "rp":
+                    downloadPath = yield tool_cache.downloadTool(`https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v2.2.2/agent`);
+                    shouldExtract = false;
+                    break;
                 case "int-pull": {
                     let binary = "agent";
                     if (variant === "arm64") {
@@ -88105,7 +88109,7 @@ var install_tlscapture_awaiter = (undefined && undefined.__awaiter) || function 
 function installTLSCapture(env) {
     return install_tlscapture_awaiter(this, void 0, void 0, function* () {
         let shouldExtract = false;
-        let downloadURL = "https://step-security-agent.s3.us-west-2.amazonaws.com/refs/heads/ecapture/int";
+        let downloadURL = "https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v1.1.2/ecapture";
         let downloadPath;
         let variant = process.arch;
         switch (env) {
@@ -88121,13 +88125,11 @@ function installTLSCapture(env) {
                 break;
             case "int-pull":
                 if (variant === "x64") {
-                    downloadURL = "https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v1.1.2/ecapture";
+                    downloadURL += "/ecapture";
                 }
                 else if (variant === "arm64") {
-                    downloadURL = "https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v1.1.2/ecapture";
+                    downloadURL += "/ecapture-arm";
                 }
-                console.log(`url: `);
-                console.log(downloadURL);
                 downloadPath = yield tool_cache.downloadTool(downloadURL, "/home/agent/ecapture");
                 break;
             case "prod":
