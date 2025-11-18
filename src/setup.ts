@@ -303,7 +303,7 @@ interface MonitorResponse {
     cp.execSync("sudo mkdir -p /home/agent");
     cp.execSync("sudo chown -R $USER /home/agent");
 
-    await installTLSCapture(await core.getInput("tls-env"));
+    //await installTLSCapture(await core.getInput("tls-env"));
     await installAgent(await core.getInput("agent-env"), true, confgStr);
 
     // Check that the file exists locally

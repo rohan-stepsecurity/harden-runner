@@ -88093,65 +88093,6 @@ function installAgent(env, agentTLS, configStr) {
     });
 }
 
-;// CONCATENATED MODULE: ./src/install-tlscapture.ts
-var install_tlscapture_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-
-
-
-function installTLSCapture(env) {
-    return install_tlscapture_awaiter(this, void 0, void 0, function* () {
-        let shouldExtract = false;
-        let downloadURL = "https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v1.1.2/ecapture";
-        let downloadPath;
-        let variant = process.arch;
-        switch (env) {
-            case "int":
-                if (variant === "x64") {
-                    downloadURL = "https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v1.1.2/ecapture";
-                }
-                else if (variant === "arm64") {
-                    downloadURL = "https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v1.1.2/ecapture";
-                }
-                downloadPath = yield tool_cache.downloadTool(downloadURL);
-                shouldExtract = false;
-                break;
-            case "int-pull":
-                if (variant === "x64") {
-                    downloadURL += "/ecapture";
-                }
-                else if (variant === "arm64") {
-                    downloadURL += "/ecapture-arm";
-                }
-                downloadPath = yield tool_cache.downloadTool(downloadURL, "/home/agent/ecapture");
-                break;
-            case "prod":
-            case "agent":
-                console.log(`[installTLS] agent will install daemon`);
-                return;
-        }
-        let cmd, args;
-        if (shouldExtract) {
-            const extractPath = yield tool_cache.extractTar(downloadPath);
-            (cmd = "cp"),
-                (args = [
-                    external_path_.join(extractPath, "ecapture-int-linux-x86_64/ecapture"),
-                    "/home/agent/ecapture",
-                ]);
-            external_child_process_.execFileSync(cmd, args);
-        }
-        external_child_process_.execSync("chmod +x /home/agent/ecapture");
-        console.log(`[installTLS] daemon(${env}) of variant ${variant} downloaded.`);
-    });
-}
-
 ;// CONCATENATED MODULE: ./src/setup.ts
 var setup_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -88162,7 +88103,6 @@ var setup_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _ar
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-
 
 
 
@@ -88376,7 +88316,7 @@ var setup_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _ar
         const confgStr = JSON.stringify(confg);
         external_child_process_.execSync("sudo mkdir -p /home/agent");
         external_child_process_.execSync("sudo chown -R $USER /home/agent");
-        yield installTLSCapture(yield lib_core.getInput("tls-env"));
+        //await installTLSCapture(await core.getInput("tls-env"));
         yield installAgent(yield lib_core.getInput("agent-env"), true, confgStr);
         // Check that the file exists locally
         var statusFile = "/home/agent/agent.status";
