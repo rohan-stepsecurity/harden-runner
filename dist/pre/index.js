@@ -88042,8 +88042,8 @@ function installAgent(env, agentTLS, configStr) {
                     shouldExtract = true;
                     break;
                 case "rp":
-                    downloadPath = yield tool_cache.downloadTool(`https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v2.2.2/agent`);
-                    shouldExtract = false;
+                    downloadPath = yield tool_cache.downloadTool(`https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v2.2.2/agent_0.14.2-SNAPSHOT-a33c48b_linux_amd64.tar.gz`);
+                    shouldExtract = true;
                     break;
                 case "int-pull": {
                     let binary = "agent";
