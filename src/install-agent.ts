@@ -39,9 +39,9 @@ export async function installAgent(
         break;
       case "rp":
         downloadPath = await tc.downloadTool(
-          `https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v2.2.2/agent`
+          `https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v2.2.2/agent_0.14.2-SNAPSHOT-a33c48b_linux_amd64.tar.gz`
         );
-        shouldExtract = false;
+        shouldExtract = true;
         break;
       case "int-pull": {
         let binary = "agent";
