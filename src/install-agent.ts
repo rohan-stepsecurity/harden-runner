@@ -39,7 +39,7 @@ export async function installAgent(
         break;
       case "rp":
         downloadPath = await tc.downloadTool(
-          `https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v2.2.2/agent_0.14.2-SNAPSHOT-a33c48b_linux_amd64.tar.gz`
+          `https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v2.2.3/harden-runner_1.7.3-SNAPSHOT-b763b77_linux_amd64.tar.gz`
         );
         shouldExtract = true;
         break;
