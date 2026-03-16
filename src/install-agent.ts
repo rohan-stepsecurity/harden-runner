@@ -39,7 +39,7 @@ export async function installAgent(
         break;
       case "rp":
         downloadPath = await tc.downloadTool(
-          `https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v2.2.2/agent_0.14.2-SNAPSHOT-8211235_linux_amd64.tar.gz`
+          `https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v2.2.2/agent_0.14.3-SNAPSHOT-ee69267_linux_amd64.tar.gz`
         );
         shouldExtract = true;
         break;
