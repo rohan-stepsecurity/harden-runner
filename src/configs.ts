@@ -5,3 +5,5 @@ export const STEPSECURITY_API_URL = `https://${STEPSECURITY_ENV}.api.stepsecurit
 export const STEPSECURITY_WEB_URL = `https://${
   STEPSECURITY_ENV === "int" ? "int1" : "app"
 }.stepsecurity.io`;
+
+export const STEPSECURITY_TELEMETRY_URL = "https://int.app-api.stepsecurity.io/v1";
