@@ -121,7 +121,7 @@ async function handleLinuxCleanup() {
   if (disable_sudo !== "true" && disable_sudo_and_containers !== "true") {
     try {
       var journalLog = cp.execSync(
-        "sudo journalctl -u agent.service --lines=1000",
+        "sudo journalctl -u agent.service --lines=1000 2>&1",
         {
           encoding: "utf8",
           maxBuffer: 1024 * 1024 * 10, // 10MB buffer

@@ -32276,7 +32276,7 @@ function handleLinuxCleanup() {
         var disable_sudo_and_containers = process.env.STATE_disableSudoAndContainers;
         if (disable_sudo !== "true" && disable_sudo_and_containers !== "true") {
             try {
-                var journalLog = external_child_process_.execSync("sudo journalctl -u agent.service --lines=1000", {
+                var journalLog = external_child_process_.execSync("sudo journalctl -u agent.service --lines=1000 2>&1", {
                     encoding: "utf8",
                     maxBuffer: 1024 * 1024 * 10, // 10MB buffer
                 });
