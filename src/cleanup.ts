@@ -114,14 +114,6 @@ async function handleLinuxCleanup() {
     console.log("::endgroup::");
   }
 
-  var status = "/home/agent/agent.status";
-  if (fs.existsSync(status)) {
-    console.log("::group::[StepSecurity] HardenRunner Agent Status");
-    var content = fs.readFileSync(status, "utf-8");
-    console.log(content);
-    console.log("::endgroup::");
-  }
-
   var disable_sudo = process.env.STATE_disableSudo;
   var disable_sudo_and_containers = process.env.STATE_disableSudoAndContainers;
 
@@ -141,6 +133,16 @@ async function handleLinuxCleanup() {
       console.log("Warning: Could not fetch service logs:", error.message);
     }
   }
+
+  var status = "/home/agent/agent.status";
+  if (fs.existsSync(status)) {
+    console.log("::group::[StepSecurity] HardenRunner Agent Status");
+    var content = fs.readFileSync(status, "utf-8");
+    console.log(content);
+    console.log("::endgroup::");
+  }
+
+
 }
 
 async function handleMacosCleanup() {

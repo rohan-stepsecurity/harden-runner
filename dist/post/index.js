@@ -32271,13 +32271,6 @@ function handleLinuxCleanup() {
             console.log(content);
             console.log("::endgroup::");
         }
-        var status = "/home/agent/agent.status";
-        if (external_fs_.existsSync(status)) {
-            console.log("::group::[StepSecurity] HardenRunner Agent Status");
-            var content = external_fs_.readFileSync(status, "utf-8");
-            console.log(content);
-            console.log("::endgroup::");
-        }
         var disable_sudo = process.env.STATE_disableSudo;
         var disable_sudo_and_containers = process.env.STATE_disableSudoAndContainers;
         if (disable_sudo !== "true" && disable_sudo_and_containers !== "true") {
@@ -32293,6 +32286,13 @@ function handleLinuxCleanup() {
             catch (error) {
                 console.log("Warning: Could not fetch service logs:", error.message);
             }
+        }
+        var status = "/home/agent/agent.status";
+        if (external_fs_.existsSync(status)) {
+            console.log("::group::[StepSecurity] HardenRunner Agent Status");
+            var content = external_fs_.readFileSync(status, "utf-8");
+            console.log(content);
+            console.log("::endgroup::");
         }
     });
 }
