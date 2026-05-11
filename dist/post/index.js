@@ -32182,6 +32182,7 @@ var cleanup_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _
 
 
 
+
 (() => cleanup_awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     console.log("[harden-runner] post-step");
@@ -32259,17 +32260,17 @@ function handleLinuxCleanup() {
         }
         const log = "/home/agent/agent.log";
         if (external_fs_.existsSync(log)) {
-            console.log("::group::[StepSecurity] HardenRunner Agent Log");
+            lib_core.startGroup("[StepSecurity] HardenRunner Agent Log");
             var content = external_fs_.readFileSync(log, "utf-8");
             console.log(content);
-            console.log("::endgroup::");
+            lib_core.endGroup();
         }
         const daemonLog = "/home/agent/daemon.log";
         if (external_fs_.existsSync(daemonLog)) {
-            console.log("::group::[StepSecurity] HardenRunner Daemon Log");
+            lib_core.startGroup("[StepSecurity] HardenRunner Daemon Log");
             var content = external_fs_.readFileSync(daemonLog, "utf-8");
             console.log(content);
-            console.log("::endgroup::");
+            lib_core.endGroup();
         }
         var disable_sudo = process.env.STATE_disableSudo;
         var disable_sudo_and_containers = process.env.STATE_disableSudoAndContainers;
@@ -32279,9 +32280,9 @@ function handleLinuxCleanup() {
                     encoding: "utf8",
                     maxBuffer: 1024 * 1024 * 10, // 10MB buffer
                 });
-                console.log("::group::[StepSecurity] HardenRunner Service Log");
+                lib_core.startGroup("[StepSecurity] HardenRunner Service Log");
                 console.log(journalLog);
-                console.log("::endgroup::");
+                lib_core.endGroup();
             }
             catch (error) {
                 console.log("Warning: Could not fetch service logs:", error.message);
@@ -32289,10 +32290,10 @@ function handleLinuxCleanup() {
         }
         var status = "/home/agent/agent.status";
         if (external_fs_.existsSync(status)) {
-            console.log("::group::[StepSecurity] HardenRunner Agent Status");
+            lib_core.startGroup("[StepSecurity] HardenRunner Agent Status");
             var content = external_fs_.readFileSync(status, "utf-8");
             console.log(content);
-            console.log("::endgroup::");
+            lib_core.endGroup();
         }
     });
 }
@@ -32325,10 +32326,10 @@ function handleMacosCleanup() {
         }
         let macAgentLog = "/opt/step-security/agent.log";
         if (external_fs_.existsSync(macAgentLog)) {
-            console.log("::group::[StepSecurity] HardenRunner Agent Log");
+            lib_core.startGroup("[StepSecurity] HardenRunner Agent Log");
             var content = external_fs_.readFileSync(macAgentLog, "utf-8");
             console.log(content);
-            console.log("::endgroup::");
+            lib_core.endGroup();
         }
         else {
             console.log("😭 macos agent.log file not found");
@@ -32340,9 +32341,9 @@ function handleMacosCleanup() {
                 maxBuffer: 1024 * 1024 * 10,
                 timeout: 5000, // 5 seconds timeout
             });
-            console.log("::group::[StepSecurity] HardenRunner System Log");
+            lib_core.startGroup("[StepSecurity] HardenRunner System Log");
             console.log(logStreamOutput);
-            console.log("::endgroup::");
+            lib_core.endGroup();
         }
         catch (error) {
             console.log("Warning: Could not fetch system log stream:", error.message);
@@ -32434,10 +32435,10 @@ function handleWindowsCleanup() {
         }
         const log = external_path_.join(agentDir, "agent.log");
         if (external_fs_.existsSync(log)) {
-            console.log("::group::[StepSecurity] HardenRunner Agent Log");
+            lib_core.startGroup("[StepSecurity] HardenRunner Agent Log");
             const content = external_fs_.readFileSync(log, "utf-8");
             console.log(content);
-            console.log("::endgroup::");
+            lib_core.endGroup();
         }
     });
 }

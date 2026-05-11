@@ -6,6 +6,7 @@ import isDocker from "is-docker";
 import { isARCRunner } from "./arc-runner";
 import { isGithubHosted } from "./tls-inspect";
 import { context } from "@actions/github";
+import * as core from "@actions/core";
 import { isPlatformSupported, isAgentInstalled } from "./utils";
 
 (async () => {
@@ -100,18 +101,18 @@ async function handleLinuxCleanup() {
 
   const log = "/home/agent/agent.log";
   if (fs.existsSync(log)) {
-    console.log("::group::[StepSecurity] HardenRunner Agent Log");
+    core.startGroup("[StepSecurity] HardenRunner Agent Log");
     var content = fs.readFileSync(log, "utf-8");
     console.log(content);
-    console.log("::endgroup::");
+    core.endGroup();
   }
 
   const daemonLog = "/home/agent/daemon.log";
   if (fs.existsSync(daemonLog)) {
-    console.log("::group::[StepSecurity] HardenRunner Daemon Log");
+    core.startGroup("[StepSecurity] HardenRunner Daemon Log");
     var content = fs.readFileSync(daemonLog, "utf-8");
     console.log(content);
-    console.log("::endgroup::");
+    core.endGroup();
   }
 
   var disable_sudo = process.env.STATE_disableSudo;
@@ -126,9 +127,9 @@ async function handleLinuxCleanup() {
           maxBuffer: 1024 * 1024 * 10, // 10MB buffer
         }
       );
-      console.log("::group::[StepSecurity] HardenRunner Service Log");
+      core.startGroup("[StepSecurity] HardenRunner Service Log");
       console.log(journalLog);
-      console.log("::endgroup::");
+      core.endGroup();
     } catch (error) {
       console.log("Warning: Could not fetch service logs:", error.message);
     }
@@ -136,10 +137,10 @@ async function handleLinuxCleanup() {
 
   var status = "/home/agent/agent.status";
   if (fs.existsSync(status)) {
-    console.log("::group::[StepSecurity] HardenRunner Agent Status");
+    core.startGroup("[StepSecurity] HardenRunner Agent Status");
     var content = fs.readFileSync(status, "utf-8");
     console.log(content);
-    console.log("::endgroup::");
+    core.endGroup();
   }
 
 
@@ -176,10 +177,10 @@ async function handleMacosCleanup() {
 
   let macAgentLog = "/opt/step-security/agent.log";
   if (fs.existsSync(macAgentLog)) {
-    console.log("::group::[StepSecurity] HardenRunner Agent Log");
+    core.startGroup("[StepSecurity] HardenRunner Agent Log");
     var content = fs.readFileSync(macAgentLog, "utf-8");
     console.log(content);
-    console.log("::endgroup::");
+    core.endGroup();
   } else {
     console.log("😭 macos agent.log file not found");
   }
@@ -194,9 +195,9 @@ async function handleMacosCleanup() {
         timeout: 5000, // 5 seconds timeout
       }
     );
-    console.log("::group::[StepSecurity] HardenRunner System Log");
+    core.startGroup("[StepSecurity] HardenRunner System Log");
     console.log(logStreamOutput);
-    console.log("::endgroup::");
+    core.endGroup();
   } catch (error) {
     console.log("Warning: Could not fetch system log stream:", error.message);
   }
@@ -301,10 +302,10 @@ async function handleWindowsCleanup() {
 
   const log = path.join(agentDir, "agent.log");
   if (fs.existsSync(log)) {
-    console.log("::group::[StepSecurity] HardenRunner Agent Log");
+    core.startGroup("[StepSecurity] HardenRunner Agent Log");
     const content = fs.readFileSync(log, "utf-8");
     console.log(content);
-    console.log("::endgroup::");
+    core.endGroup();
   }
 }
 
