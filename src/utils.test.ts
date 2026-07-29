@@ -1,12 +1,26 @@
-import { shouldDeployAgentOnSelfHosted, isAgentInstalled, isPlatformSupported, getAnnotationLogs, detectThirdPartyRunnerProvider } from "./utils";
+import { shouldDeployAgentOnSelfHosted, isAgentInstalled, isPlatformSupported, getAnnotationLogs, detectThirdPartyRunnerProvider, getRunnerUser, chownForFolder } from "./utils";
 import * as fs from "fs";
+import * as os from "os";
+import * as cp from "child_process";
 
 jest.mock("fs", () => ({
   ...jest.requireActual("fs"),
   existsSync: jest.fn(),
 }));
 
+jest.mock("os", () => ({
+  ...jest.requireActual("os"),
+  userInfo: jest.fn(),
+}));
+
+jest.mock("child_process", () => ({
+  ...jest.requireActual("child_process"),
+  execFileSync: jest.fn(),
+}));
+
 const mockedExistsSync = fs.existsSync as jest.MockedFunction<typeof fs.existsSync>;
+const mockedUserInfo = os.userInfo as jest.MockedFunction<typeof os.userInfo>;
+const mockedExecFileSync = cp.execFileSync as jest.MockedFunction<typeof cp.execFileSync>;
 
 describe("shouldDeployAgentOnSelfHosted", () => {
   test("returns true when deploy flag is true, not container, agent not installed", () => {
@@ -88,6 +102,108 @@ describe("isPlatformSupported", () => {
 describe("getAnnotationLogs", () => {
   test("throws for unsupported platform", () => {
     expect(() => getAnnotationLogs("freebsd" as NodeJS.Platform)).toThrow("platform not supported");
+  });
+});
+
+describe("getRunnerUser", () => {
+  const originalEnv = process.env;
+  const originalGetuid = process.getuid;
+
+  beforeEach(() => {
+    process.env = { ...originalEnv };
+    delete process.env.USER;
+    delete process.env.LOGNAME;
+    delete process.env.USERNAME;
+    mockedUserInfo.mockReset();
+    mockedExecFileSync.mockReset();
+  });
+
+  afterEach(() => {
+    process.getuid = originalGetuid;
+  });
+
+  afterAll(() => {
+    process.env = originalEnv;
+  });
+
+  test("prefers USER", () => {
+    process.env.USER = "runner";
+    process.env.LOGNAME = "logname-user";
+    expect(getRunnerUser()).toBe("runner");
+    expect(mockedUserInfo).not.toHaveBeenCalled();
+  });
+
+  test("falls back to LOGNAME when USER is unset", () => {
+    process.env.LOGNAME = "codebuild-user";
+    expect(getRunnerUser()).toBe("codebuild-user");
+  });
+
+  test("falls back to os.userInfo when env vars are unset", () => {
+    mockedUserInfo.mockReturnValue({ username: "ec2-user" } as any);
+    expect(getRunnerUser()).toBe("ec2-user");
+  });
+
+  test("falls back to `id -un` when os.userInfo throws", () => {
+    mockedUserInfo.mockImplementation(() => {
+      throw new Error("uid not found in /etc/passwd");
+    });
+    mockedExecFileSync.mockReturnValue("root\n");
+    expect(getRunnerUser()).toBe("root");
+    expect(mockedExecFileSync).toHaveBeenCalledWith("id", ["-un"], { encoding: "utf8" });
+  });
+
+  test("falls back to numeric uid when everything else fails", () => {
+    mockedUserInfo.mockImplementation(() => {
+      throw new Error("no passwd entry");
+    });
+    mockedExecFileSync.mockImplementation(() => {
+      throw new Error("id not found");
+    });
+    process.getuid = (() => 1000) as typeof process.getuid;
+    expect(getRunnerUser()).toBe("1000");
+  });
+
+  test("never returns undefined as a string", () => {
+    mockedUserInfo.mockReturnValue({ username: "" } as any);
+    mockedExecFileSync.mockReturnValue("  \n");
+    process.getuid = (() => 0) as typeof process.getuid;
+    expect(getRunnerUser()).toBe("0");
+  });
+});
+
+describe("chownForFolder", () => {
+  const originalEnv = process.env;
+
+  beforeEach(() => {
+    process.env = { ...originalEnv };
+    mockedUserInfo.mockReset();
+    mockedExecFileSync.mockReset();
+    mockedExecFileSync.mockReturnValue("" as any);
+  });
+
+  afterAll(() => {
+    process.env = originalEnv;
+  });
+
+  test("uses the resolved runner user when no owner is passed", () => {
+    process.env.USER = "runner";
+    chownForFolder("/home/agent");
+    expect(mockedExecFileSync).toHaveBeenCalledWith("sudo", ["chown", "-R", "runner", "/home/agent"]);
+  });
+
+  test("uses the explicit owner when passed", () => {
+    process.env.USER = "runner";
+    chownForFolder("/home/agent", "root");
+    expect(mockedExecFileSync).toHaveBeenCalledWith("sudo", ["chown", "-R", "root", "/home/agent"]);
+  });
+
+  test("does not pass undefined when USER is unset", () => {
+    delete process.env.USER;
+    delete process.env.LOGNAME;
+    delete process.env.USERNAME;
+    mockedUserInfo.mockReturnValue({ username: "ec2-user" } as any);
+    chownForFolder("/home/agent");
+    expect(mockedExecFileSync).toHaveBeenCalledWith("sudo", ["chown", "-R", "ec2-user", "/home/agent"]);
   });
 });
 

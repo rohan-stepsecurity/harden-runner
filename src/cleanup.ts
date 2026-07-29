@@ -12,7 +12,6 @@ import {
   isAgentInstalled,
   detectThirdPartyRunnerProvider,
 } from "./utils";
-import * as core from "@actions/core";
 
 // See setup.ts for rationale — Node 22+ kills the process on unhandled rejections.
 process.on("unhandledRejection", (reason) => {

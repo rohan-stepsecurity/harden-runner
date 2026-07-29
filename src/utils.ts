@@ -1,5 +1,6 @@
 import * as cp from "child_process";
 import * as fs from "fs";
+import * as os from "os";
 
 export function isPlatformSupported(platform: NodeJS.Platform) {
   switch (platform) {
@@ -13,9 +14,45 @@ export function isPlatformSupported(platform: NodeJS.Platform) {
   }
 }
 
-export function chownForFolder(newOwner: string, target: string) {
+// Some self-hosted runner environments (e.g. AWS CodeBuild on EC2) do not set
+// USER/LOGNAME, so process.env.USER is undefined and chown fails with
+// "invalid user: 'undefined'". Resolve the owner from several sources instead.
+export function getRunnerUser(): string {
+  const fromEnv = process.env.USER || process.env.LOGNAME || process.env.USERNAME;
+  if (fromEnv) {
+    return fromEnv;
+  }
+
+  try {
+    const username = os.userInfo().username;
+    if (username) {
+      return username;
+    }
+  } catch (e) {
+    // uid may not have a /etc/passwd entry; fall through
+  }
+
+  try {
+    const username = cp.execFileSync("id", ["-un"], { encoding: "utf8" }).trim();
+    if (username) {
+      return username;
+    }
+  } catch (e) {
+    // fall through
+  }
+
+  // chown accepts a numeric uid as well
+  if (typeof process.getuid === "function") {
+    return String(process.getuid());
+  }
+
+  throw new Error("unable to determine the current user to chown as");
+}
+
+export function chownForFolder(target: string, newOwner?: string) {
+  const owner = newOwner || getRunnerUser();
   let cmd = "sudo";
-  let args = ["chown", "-R", newOwner, target];
+  let args = ["chown", "-R", owner, target];
   cp.execFileSync(cmd, args);
 }
 

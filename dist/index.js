@@ -31880,7 +31880,10 @@ var lib_core = __nccwpck_require__(7484);
 var external_child_process_ = __nccwpck_require__(5317);
 // EXTERNAL MODULE: external "fs"
 var external_fs_ = __nccwpck_require__(9896);
+// EXTERNAL MODULE: external "os"
+var external_os_ = __nccwpck_require__(857);
 ;// CONCATENATED MODULE: ./src/utils.ts
+
 
 
 function isPlatformSupported(platform) {
@@ -31893,9 +31896,42 @@ function isPlatformSupported(platform) {
             return false;
     }
 }
-function chownForFolder(newOwner, target) {
+// Some self-hosted runner environments (e.g. AWS CodeBuild on EC2) do not set
+// USER/LOGNAME, so process.env.USER is undefined and chown fails with
+// "invalid user: 'undefined'". Resolve the owner from several sources instead.
+function getRunnerUser() {
+    const fromEnv = process.env.USER || process.env.LOGNAME || process.env.USERNAME;
+    if (fromEnv) {
+        return fromEnv;
+    }
+    try {
+        const username = os.userInfo().username;
+        if (username) {
+            return username;
+        }
+    }
+    catch (e) {
+        // uid may not have a /etc/passwd entry; fall through
+    }
+    try {
+        const username = cp.execFileSync("id", ["-un"], { encoding: "utf8" }).trim();
+        if (username) {
+            return username;
+        }
+    }
+    catch (e) {
+        // fall through
+    }
+    // chown accepts a numeric uid as well
+    if (typeof process.getuid === "function") {
+        return String(process.getuid());
+    }
+    throw new Error("unable to determine the current user to chown as");
+}
+function chownForFolder(target, newOwner) {
+    const owner = newOwner || getRunnerUser();
     let cmd = "sudo";
-    let args = ["chown", "-R", newOwner, target];
+    let args = ["chown", "-R", owner, target];
     cp.execFileSync(cmd, args);
 }
 function isAgentInstalled(platform) {

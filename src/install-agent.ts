@@ -131,7 +131,7 @@ export async function installMacosAgent(configStr: string): Promise<boolean> {
     // Create working directory
     core.info("Creating /opt/step-security directory...");
     cp.execSync("sudo mkdir -p /opt/step-security");
-    chownForFolder(process.env.USER, "/opt/step-security");
+    chownForFolder("/opt/step-security");
     core.info("✓ Successfully created /opt/step-security directory");
 
     // Create agent configuration file
