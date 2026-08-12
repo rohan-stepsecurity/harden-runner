@@ -37,7 +37,7 @@ import {
   installWindowsAgent,
 } from "./install-agent";
 
-import { chownForFolder, getRunnerUser, detectThirdPartyRunnerProvider, isAgentInstalled, isPlatformSupported, shouldDeployAgentOnSelfHosted } from "./utils";
+import { chownForFolder, getRunnerUser, getPrivilegeMode, detectThirdPartyRunnerProvider, isAgentInstalled, isPlatformSupported, shouldDeployAgentOnSelfHosted } from "./utils";
 import { buildBravoConfig } from "./bravo-config";
 
 interface MonitorResponse {
@@ -618,7 +618,9 @@ export async function installAgentForBravo(owner: string, bravoConfigStr: string
       return;
     }
 
-    cp.execSync("sudo mkdir -p /home/agent");
+    cp.execSync(
+      getPrivilegeMode() === "root" ? "mkdir -p /home/agent" : "sudo mkdir -p /home/agent"
+    );
     chownForFolder(getRunnerUser(), "/home/agent");
 
     await installAgentBravo(bravoConfigStr);

@@ -31910,14 +31910,28 @@ function getRunnerUser() {
         return undefined;
     }
 }
+function getPrivilegeMode() {
+    try {
+        if (os.userInfo().uid === 0) {
+            return "root";
+        }
+    }
+    catch (_a) {
+        // fall through to sudo
+    }
+    return "sudo";
+}
 function chownForFolder(newOwner, target) {
     if (!newOwner) {
         console.log(`Unable to determine runner user; skipping chown of ${target}`);
         return;
     }
-    let cmd = "sudo";
-    let args = ["chown", "-R", newOwner, target];
-    cp.execFileSync(cmd, args);
+    if (getPrivilegeMode() === "root") {
+        cp.execFileSync("chown", ["-R", newOwner, target]);
+    }
+    else {
+        cp.execFileSync("sudo", ["chown", "-R", newOwner, target]);
+    }
 }
 function isAgentInstalled(platform) {
     switch (platform) {
