@@ -85691,28 +85691,15 @@ function installAgent(isTLS, configStr) {
 function installAgentBravo(configStr_1) {
     return install_agent_awaiter(this, arguments, void 0, function* (configStr, useDirectPrivileges = false) {
         // Note: to avoid github rate limiting
-        /*  const token = core.getInput("token", { required: true });
-         const auth = `token ${token}`;
-       
-         const variant = process.arch === "x64" ? "amd64" : "arm64";
-         const downloadPath = await tc.downloadTool(
-           `https://github.com/step-security/agent-ebpf/releases/download/v1.8.14/harden-runner-bravo_1.8.14_linux_${variant}.tar.gz`,
-           undefined,
-           auth
-         ); */
+        const token = lib_core.getInput("token", { required: true });
+        const auth = `token ${token}`;
         const variant = process.arch === "x64" ? "amd64" : "arm64";
-        let binary = "agent-bravo";
-        if (variant === "arm64") {
-            binary = "agent-bravo-arm";
-        }
-        yield tool_cache.downloadTool(`https://step-security-agent.s3.us-west-2.amazonaws.com/refs/heads/self-hosted/h0x0er/int/${binary}`, "/home/agent/agent");
-        /*   if (!verifyChecksum(downloadPath, true, variant, "linux", "bravo")) {
+        const downloadPath = yield tool_cache.downloadTool(`https://github.com/step-security/agent-ebpf/releases/download/v1.8.14/harden-runner-bravo_1.8.14_linux_${variant}.tar.gz`, undefined, auth);
+        if (!verifyChecksum(downloadPath, true, variant, "linux", "bravo")) {
             return false;
-          }
-        
-          const extractPath = await tc.extractTar(downloadPath);
-          cp.execFileSync("cp", [path.join(extractPath, "agent"), "/home/agent/agent"]);
-        */
+        }
+        const extractPath = yield tool_cache.extractTar(downloadPath);
+        external_child_process_.execFileSync("cp", [external_path_.join(extractPath, "agent"), "/home/agent/agent"]);
         external_child_process_.execSync("chmod +x /home/agent/agent");
         external_fs_.writeFileSync("/home/agent/agent.json", configStr);
         const logStream = external_fs_.openSync("/home/agent/agent.stdout", "a");
