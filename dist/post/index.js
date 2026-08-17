@@ -31964,6 +31964,8 @@ function detectThirdPartyRunnerProvider() {
         return "bitrise";
     if (process.env["CODEBUILD_RUNNER_TYPE"] === "GITHUB")
         return "codebuild";
+    if (process.env["AWS_EXECUTION_ENV"] === "AWS_ECS_FARGATE")
+        return "fargate";
     const runnerName = (_a = process.env["RUNNER_NAME"]) !== null && _a !== void 0 ? _a : "";
     if (runnerName.startsWith("warp-"))
         return "warp";

@@ -85156,6 +85156,8 @@ function detectThirdPartyRunnerProvider() {
         return "bitrise";
     if (process.env["CODEBUILD_RUNNER_TYPE"] === "GITHUB")
         return "codebuild";
+    if (process.env["AWS_EXECUTION_ENV"] === "AWS_ECS_FARGATE")
+        return "fargate";
     const runnerName = (_a = process.env["RUNNER_NAME"]) !== null && _a !== void 0 ? _a : "";
     if (runnerName.startsWith("warp-"))
         return "warp";
@@ -86399,13 +86401,16 @@ function installAgentForBravo(owner, bravoConfigStr, provider) {
                 return;
             }
             const privilegeMode = getPrivilegeMode();
-            if (isDocker() && privilegeMode !== "root") {
+            // Fargate tasks are containers but are not detected by isDocker()
+            // (their cgroup paths use /ecs/, not docker).
+            if ((isDocker() || provider === "fargate") && privilegeMode !== "root") {
                 console.log("Running inside a container without root privileges. Bravo agent installation skipped.");
                 return;
             }
-            // CodeBuild containers run as root without a sudo binary; other
-            // providers keep the existing sudo-based install.
-            const useDirectPrivileges = provider === "codebuild" && privilegeMode === "root";
+            // CodeBuild and ECS Fargate containers run as root without a sudo
+            // binary; other providers keep the existing sudo-based install.
+            const useDirectPrivileges = (provider === "codebuild" || provider === "fargate") &&
+                privilegeMode === "root";
             external_child_process_.execSync(useDirectPrivileges ? "mkdir -p /home/agent" : "sudo mkdir -p /home/agent");
             chownForFolder(getRunnerUser(), "/home/agent", useDirectPrivileges);
             yield installAgentBravo(bravoConfigStr, useDirectPrivileges);

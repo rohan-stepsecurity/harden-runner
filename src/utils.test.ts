@@ -130,6 +130,7 @@ describe("detectThirdPartyRunnerProvider", () => {
     delete process.env.NAMESPACE_GITHUB_RUNTIME;
     delete process.env.BITRISE_IO;
     delete process.env.CODEBUILD_RUNNER_TYPE;
+    delete process.env.AWS_EXECUTION_ENV;
     delete process.env.RUNNER_NAME;
   });
 
@@ -164,6 +165,16 @@ describe("detectThirdPartyRunnerProvider", () => {
 
   test("returns null when CODEBUILD_RUNNER_TYPE has a non-GITHUB value", () => {
     process.env.CODEBUILD_RUNNER_TYPE = "OTHER";
+    expect(detectThirdPartyRunnerProvider()).toBeNull();
+  });
+
+  test("returns fargate when AWS_EXECUTION_ENV=AWS_ECS_FARGATE", () => {
+    process.env.AWS_EXECUTION_ENV = "AWS_ECS_FARGATE";
+    expect(detectThirdPartyRunnerProvider()).toBe("fargate");
+  });
+
+  test("returns null when AWS_EXECUTION_ENV has a non-Fargate value", () => {
+    process.env.AWS_EXECUTION_ENV = "AWS_ECS_EC2";
     expect(detectThirdPartyRunnerProvider()).toBeNull();
   });
 
