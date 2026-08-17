@@ -615,13 +615,6 @@ export async function installAgentForBravo(
   try {
     console.log("Installing Harden Runner bravo agent for third-party runner");
 
-    let isTLS = await isTLSEnabled(owner);
-
-    if (!isTLS) {
-      console.log("TLS is not enabled for this organization. Bravo agent installation skipped.");
-      return;
-    }
-
     const privilegeMode = getPrivilegeMode();
 
     // Fargate tasks are containers but are not detected by isDocker()

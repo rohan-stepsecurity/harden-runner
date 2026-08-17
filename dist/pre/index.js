@@ -86395,11 +86395,6 @@ function installAgentForBravo(owner, bravoConfigStr, provider) {
     return setup_awaiter(this, void 0, void 0, function* () {
         try {
             console.log("Installing Harden Runner bravo agent for third-party runner");
-            let isTLS = yield isTLSEnabled(owner);
-            if (!isTLS) {
-                console.log("TLS is not enabled for this organization. Bravo agent installation skipped.");
-                return;
-            }
             const privilegeMode = getPrivilegeMode();
             // Fargate tasks are containers but are not detected by isDocker()
             // (their cgroup paths use /ecs/, not docker).
