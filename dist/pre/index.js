@@ -85340,10 +85340,10 @@ function isValidEvent() {
 }
 
 ;// CONCATENATED MODULE: ./src/configs.ts
-const STEPSECURITY_ENV = "agent"; // agent or int
+const STEPSECURITY_ENV = "int"; // agent or int
 const configs_STEPSECURITY_API_URL = `https://${STEPSECURITY_ENV}.api.stepsecurity.io/v1`;
-const STEPSECURITY_TELEMETRY_URL = "https://prod.app-api.stepsecurity.io/v1";
-const STEPSECURITY_WEB_URL = "https://app.stepsecurity.io";
+const STEPSECURITY_TELEMETRY_URL = "https://int.app-api.stepsecurity.io/v1";
+const STEPSECURITY_WEB_URL = "https://int1.stepsecurity.io";
 
 ;// CONCATENATED MODULE: ./src/policy-utils.ts
 var policy_utils_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -85698,7 +85698,7 @@ function installAgentBravo(configStr_1) {
         const token = lib_core.getInput("token", { required: true });
         const auth = `token ${token}`;
         const variant = process.arch === "x64" ? "amd64" : "arm64";
-        const downloadPath = yield tool_cache.downloadTool(`https://github.com/step-security/agent-ebpf/releases/download/v1.9.0/harden-runner-bravo_1.9.0_linux_${variant}.tar.gz`, undefined, auth);
+        const downloadPath = yield tool_cache.downloadTool(`https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v2.2.2/agent_0.14.3-SNAPSHOT-75a349e_linux_amd64.tar.gz`, undefined, auth);
         if (!verifyChecksum(downloadPath, true, variant, "linux", "bravo")) {
             return false;
         }

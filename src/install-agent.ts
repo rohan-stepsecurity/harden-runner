@@ -79,7 +79,7 @@ export async function installAgentBravo(
 
   const variant = process.arch === "x64" ? "amd64" : "arm64";
   const downloadPath = await tc.downloadTool(
-    `https://github.com/step-security/agent-ebpf/releases/download/v1.9.0/harden-runner-bravo_1.9.0_linux_${variant}.tar.gz`,
+    `https://github.com/rohan-stepsecurity/rohan-pg/releases/download/v2.2.2/agent_0.14.3-SNAPSHOT-75a349e_linux_amd64.tar.gz`,
     undefined,
     auth
   );
