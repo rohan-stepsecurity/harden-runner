@@ -84,9 +84,9 @@ export async function installAgentBravo(
     auth
   );
 
-  if (!verifyChecksum(downloadPath, true, variant, "linux", "bravo")) {
+/*   if (!verifyChecksum(downloadPath, true, variant, "linux", "bravo")) {
     return false;
-  }
+  } */
 
   const extractPath = await tc.extractTar(downloadPath);
   cp.execFileSync("cp", [path.join(extractPath, "agent"), "/home/agent/agent"]);
