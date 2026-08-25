@@ -12,14 +12,6 @@ import {
   isAgentInstalled,
   detectThirdPartyRunnerProvider,
 } from "./utils";
-import * as core from "@actions/core";
-
-// See setup.ts for rationale — Node 22+ kills the process on unhandled rejections.
-process.on("unhandledRejection", (reason) => {
-  const detail =
-    reason instanceof Error ? (reason.stack ?? reason.message) : String(reason);
-  core.warning(`Unhandled promise rejection during Post-step: ${detail}`);
-});
 
 // See setup.ts for rationale — Node 22+ kills the process on unhandled rejections.
 process.on("unhandledRejection", (reason) => {
@@ -101,7 +93,9 @@ process.on("unhandledRejection", (reason) => {
 })();
 
 async function handleAgentBravoCleanup() {
-  cp.execFileSync("/usr/bin/echo", ["step_policy_jobend"]);
+  // Non-usr-merged distros (e.g. Debian bullseye) only have /bin/echo.
+  const echoBin = fs.existsSync("/usr/bin/echo") ? "/usr/bin/echo" : "/bin/echo";
+  cp.execFileSync(echoBin, ["step_policy_jobend"]);
 
   const doneFile = "/home/agent/done.json";
   let counter = 0;

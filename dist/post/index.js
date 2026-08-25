@@ -32303,7 +32303,9 @@ process.on("unhandledRejection", (reason) => {
 }))();
 function handleAgentBravoCleanup() {
     return cleanup_awaiter(this, void 0, void 0, function* () {
-        external_child_process_.execFileSync("/usr/bin/echo", ["step_policy_jobend"]);
+        // Non-usr-merged distros (e.g. Debian bullseye) only have /bin/echo.
+        const echoBin = external_fs_.existsSync("/usr/bin/echo") ? "/usr/bin/echo" : "/bin/echo";
+        external_child_process_.execFileSync(echoBin, ["step_policy_jobend"]);
         const doneFile = "/home/agent/done.json";
         let counter = 0;
         while (true) {
