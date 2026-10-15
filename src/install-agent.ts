@@ -73,19 +73,15 @@ export async function installAgentBravo(
   const token = core.getInput("token", { required: true });
   const auth = `token ${token}`;
 
+  // TEST BUILD: agent-bravo from the agent-self-hosted PR #406 integration
+  // build (tracer fix/dns-race-and-pre-existing), raw binary, no checksum.
   const variant = process.arch === "x64" ? "amd64" : "arm64";
-  const downloadPath = await tc.downloadTool(
-    `https://github.com/step-security/agent-ebpf/releases/download/v1.9.3/harden-runner-bravo_1.9.3_linux_${variant}.tar.gz`,
-    undefined,
-    auth
-  );
-
-  if (!verifyChecksum(downloadPath, true, variant, "linux", "bravo")) {
-    return false;
-  }
-
-  const extractPath = await tc.extractTar(downloadPath);
-  cp.execFileSync("cp", [path.join(extractPath, "agent"), "/home/agent/agent"]);
+  const s3Name = variant === "amd64" ? "agent-bravo" : "agent-bravo-arm";
+  const s3Url = `https://step-security-agent.s3.us-west-2.amazonaws.com/refs/heads/self-hosted/rohan-stepsecurity/int/${s3Name}`;
+  console.log(`Downloading TEST agent-bravo from ${s3Url}`);
+  const downloadPath = await tc.downloadTool(s3Url);
+  void auth;
+  cp.execFileSync("cp", [downloadPath, "/home/agent/agent"]);
 
   cp.execSync("chmod +x /home/agent/agent");
 
